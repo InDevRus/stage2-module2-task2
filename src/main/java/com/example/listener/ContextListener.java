@@ -15,7 +15,7 @@ public class ContextListener implements ServletContextListener {
     }
 
     @Override
-    public void contextDestroyed(ServletContextEvent sce) {
-
+    public void contextDestroyed(ServletContextEvent servletContextEvent) {
+        //Required to be implemented by Tomcat
     }
 }

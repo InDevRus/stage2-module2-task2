@@ -11,7 +11,7 @@ import java.util.Objects;
 public class AuthFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) {
-
+        //Required to be implemented by Tomcat
     }
 
     @Override

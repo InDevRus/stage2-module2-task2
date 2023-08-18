@@ -1,9 +1,11 @@
 package com.example.filter;
 
-import com.example.jsp.paths.JSPPaths;
+import com.example.jsp.paths.JSPPath;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -18,8 +20,19 @@ public class AuthFilter implements Filter {
     public void doFilter(ServletRequest servletRequest,
                          ServletResponse servletResponse,
                          FilterChain filterChain) throws IOException, ServletException {
-        if (Objects.isNull(servletRequest.getAttribute("user"))) {
-            servletRequest.getRequestDispatcher(JSPPaths.LOGIN).forward(servletRequest, servletResponse);
+        if (!(servletRequest instanceof HttpServletRequest)) {
+            throw new ServletException("Request must implement HttpServletRequest");
+        }
+
+        if (!(servletResponse instanceof HttpServletResponse)) {
+            throw new ServletException("Response must implement HttpServletResponse");
+        }
+
+        HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
+        HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
+
+        if (Objects.isNull(httpServletRequest.getSession().getAttribute("user"))) {
+            httpServletResponse.sendRedirect(JSPPath.LOGIN.encodeRedirectURLWith(httpServletRequest, httpServletResponse));
             return;
         }
 

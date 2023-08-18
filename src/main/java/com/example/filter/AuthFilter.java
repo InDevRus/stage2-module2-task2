@@ -10,7 +10,7 @@ import java.util.Objects;
 @WebFilter(urlPatterns = "/user/*")
 public class AuthFilter implements Filter {
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
 
     }
 

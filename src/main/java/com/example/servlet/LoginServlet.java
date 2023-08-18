@@ -1,7 +1,7 @@
 package com.example.servlet;
 
 import com.example.Users;
-import com.example.jsp.paths.JSPPaths;
+import com.example.jsp.paths.JSPPath;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -24,14 +24,14 @@ public class LoginServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         HttpSession session = request.getSession();
-        String targetJSP = Objects.nonNull(session.getAttribute("user")) ? JSPPaths.HELLO : JSPPaths.LOGIN;
-        request.getRequestDispatcher(targetJSP).forward(request, response);
+        JSPPath targetJSP = Objects.nonNull(session.getAttribute("user")) ? JSPPath.USER_HELLO : JSPPath.LOGIN;
+        response.sendRedirect(targetJSP.encodeRedirectURLWith(request, response));
     }
 
-    private Optional<String> extractUserLogin(ServletRequest session) {
-        return Optional.ofNullable(session.getParameter("login")).filter(users.getUsers()::contains);
+    private Optional<String> extractUserLogin(ServletRequest request) {
+        return Optional.ofNullable(request.getParameter("login")).filter(users.getUsers()::contains);
     }
 
     @Override
@@ -41,10 +41,11 @@ public class LoginServlet extends HttpServlet {
         Optional<String> user = extractUserLogin(request);
         boolean areAttributesCorrect = isPasswordBlankOrNull(request) && user.isPresent();
 
-        String targetJSP = areAttributesCorrect ? JSPPaths.HELLO : JSPPaths.LOGIN;
         if (areAttributesCorrect) {
             session.setAttribute("user", user.get());
+            response.sendRedirect(JSPPath.USER_HELLO.encodeRedirectURLWith(request, response));
+            return;
         }
-        request.getRequestDispatcher(targetJSP).forward(request, response);
+        request.getRequestDispatcher(JSPPath.LOGIN.getPathToJSP()).forward(request, response);
     }
 }

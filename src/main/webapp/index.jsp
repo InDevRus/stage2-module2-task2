@@ -4,6 +4,7 @@
 <c:set var="language" value="en" scope="session"/>
 <!DOCTYPE html>
 <html lang="en">
+<title>Welcome</title>
 <body>
 <%--<c:out value="${pageContext.request.contextPath}"/>--%>
 <jsp:forward page="/login"/>

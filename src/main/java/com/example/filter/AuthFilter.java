@@ -8,34 +8,43 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 @WebFilter(urlPatterns = "/user/*")
 public class AuthFilter implements Filter {
+    private final Logger logger = Logger.getGlobal();
+
     @Override
     public void init(FilterConfig filterConfig) {
         //Required to be implemented by Tomcat
     }
 
     @Override
-    public void doFilter(ServletRequest servletRequest,
-                         ServletResponse servletResponse,
-                         FilterChain filterChain) throws IOException, ServletException {
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) {
         if (!(servletRequest instanceof HttpServletRequest)) {
-            throw new ServletException("Request must implement HttpServletRequest");
+            logger.severe("Request must implement HttpServletRequest");
+            return;
         }
 
         if (!(servletResponse instanceof HttpServletResponse)) {
-            throw new ServletException("Response must implement HttpServletResponse");
+            logger.severe("Response must implement HttpServletResponse");
+            return;
         }
 
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
         HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
 
-        if (Objects.isNull(httpServletRequest.getSession().getAttribute("user"))) {
-            httpServletResponse.sendRedirect(JSPPath.LOGIN);
-            return;
-        }
+        boolean isUserAbsent = Objects.isNull(httpServletRequest.getSession().getAttribute("user"));
 
-        filterChain.doFilter(servletRequest, servletResponse);
+        try {
+            if (isUserAbsent) {
+                httpServletResponse.sendRedirect(JSPPath.LOGIN);
+                return;
+            }
+
+            filterChain.doFilter(servletRequest, servletResponse);
+        } catch (IOException | ServletException exception) {
+            logger.severe(exception.getMessage());
+        }
     }
 }

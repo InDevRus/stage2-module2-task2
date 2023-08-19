@@ -13,10 +13,13 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
     private final Users users = Users.getInstance();
+
+    private final Logger logger = Logger.getGlobal();
 
     private boolean isPasswordBlankOrNull(ServletRequest request) {
         String password = request.getParameter("password");
@@ -24,10 +27,14 @@ public class LoginServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
         String targetJSP = Objects.nonNull(session.getAttribute("user")) ? JSPPath.USER_HELLO : JSPPath.LOGIN;
-        response.sendRedirect(targetJSP);
+        try {
+            response.sendRedirect(targetJSP);
+        } catch (IOException exception) {
+            logger.severe(exception.getMessage());
+        }
     }
 
     private Optional<String> extractUserLogin(ServletRequest request) {
@@ -35,17 +42,21 @@ public class LoginServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
 
         Optional<String> user = extractUserLogin(request);
         boolean areAttributesCorrect = !isPasswordBlankOrNull(request) && user.isPresent();
 
-        if (areAttributesCorrect) {
-            session.setAttribute("user", user.get());
-            response.sendRedirect(JSPPath.USER_HELLO);
-            return;
+        try {
+            if (areAttributesCorrect) {
+                session.setAttribute("user", user.get());
+                response.sendRedirect(JSPPath.USER_HELLO);
+            } else {
+                request.getRequestDispatcher(JSPPath.LOGIN).forward(request, response);
+            }
+        } catch (ServletException | IOException exception) {
+            logger.severe(exception.getMessage());
         }
-        request.getRequestDispatcher(JSPPath.LOGIN).forward(request, response);
     }
 }

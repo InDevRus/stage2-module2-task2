@@ -32,7 +32,7 @@ public class AuthFilter implements Filter {
         HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
 
         if (Objects.isNull(httpServletRequest.getSession().getAttribute("user"))) {
-            httpServletResponse.sendRedirect(JSPPath.LOGIN.getPathToJSP());
+            httpServletResponse.sendRedirect(JSPPath.LOGIN);
             return;
         }
 

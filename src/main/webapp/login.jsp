@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title> Registration page</title>
+<title></title>
 </head>
 <h3>Init time: ${servletTimeInit}</h3>
 <body>

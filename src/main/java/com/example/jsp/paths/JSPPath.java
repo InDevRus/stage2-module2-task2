@@ -4,8 +4,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.text.MessageFormat;
 
+@SuppressWarnings("unused")
 public enum JSPPath {
-    USER_HELLO("/user/hello.jsp"), INDEX("index.jsp"), LOGIN("login.jsp");
+    USER_HELLO("/user/hello.jsp"), INDEX("/index.jsp"), LOGIN("/login.jsp");
 
     private final String pathToJSP;
 

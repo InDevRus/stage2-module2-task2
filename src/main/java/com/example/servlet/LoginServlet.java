@@ -39,7 +39,7 @@ public class LoginServlet extends HttpServlet {
         HttpSession session = request.getSession();
 
         Optional<String> user = extractUserLogin(request);
-        boolean areAttributesCorrect = isPasswordBlankOrNull(request) && user.isPresent();
+        boolean areAttributesCorrect = !isPasswordBlankOrNull(request) && user.isPresent();
 
         if (areAttributesCorrect) {
             session.setAttribute("user", user.get());

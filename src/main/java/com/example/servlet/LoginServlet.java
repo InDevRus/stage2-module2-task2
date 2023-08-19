@@ -27,7 +27,7 @@ public class LoginServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         HttpSession session = request.getSession();
         JSPPath targetJSP = Objects.nonNull(session.getAttribute("user")) ? JSPPath.USER_HELLO : JSPPath.LOGIN;
-        response.sendRedirect(targetJSP.encodeRedirectURLWith(request, response));
+        response.sendRedirect(targetJSP.getPathToJSP());
     }
 
     private Optional<String> extractUserLogin(ServletRequest request) {
@@ -43,7 +43,7 @@ public class LoginServlet extends HttpServlet {
 
         if (areAttributesCorrect) {
             session.setAttribute("user", user.get());
-            response.sendRedirect(JSPPath.USER_HELLO.encodeRedirectURLWith(request, response));
+            response.sendRedirect(JSPPath.USER_HELLO.getPathToJSP());
             return;
         }
         request.getRequestDispatcher(JSPPath.LOGIN.getPathToJSP()).forward(request, response);
